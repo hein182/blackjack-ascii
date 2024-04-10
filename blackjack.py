@@ -150,12 +150,27 @@ def blackJack():
     if check_hand(d_hand) >= 17:
         d_stay = True
     if not p_stay:
-        ask_hit()
+        b = ask_hit()
+        if b == 0:
+            p_stay = True
     if not d_stay:
         draw_card(d_hand, 'd')
+        if check_hand(d_hand) >= 17:
+            d_stay = True
     if check_hand(d_hand) > 21:
         print("Dealer busts!")
         win()
+    if not p_stay:
+        ask_hit()
+        if check_hand(p_hand) > 21:
+            lose()
+        else:
+            win()
+    if not d_stay:
+        draw_card(d_hand, 'd')
+        if check_hand(d_hand) >= 17:
+            d_stay = True
+    #do
     if check_hand(d_hand) > check_hand(p_hand):
         lose()
     win()
