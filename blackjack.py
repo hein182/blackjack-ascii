@@ -108,6 +108,17 @@ def win():
     else:
         exit()
 
+def draw():
+    print(f"       {bcolors.UNDERLINE}You draw!{bcolors.ENDC}")
+    print("Play again (y/n): ", end='')
+    yn = input()
+    if(yn == "y"):
+        init_bj()
+        blackJack()
+    else:
+        exit()
+
+
 def lose():
     print(f"       {bcolors.WARNING}You lose!{bcolors.ENDC}")
     print("Play again (y/n): ", end='')
@@ -117,6 +128,7 @@ def lose():
         blackJack()
     else:
         exit()
+
 def ask_hit():
     print("Dealer asks you for hit (y/n):", end='')
     yn = input()
@@ -166,13 +178,17 @@ def blackJack():
             lose()
         else:
             win()
-    if not d_stay:
-        draw_card(d_hand, 'd')
-        if check_hand(d_hand) >= 17:
-            d_stay = True
-    #do
+    while d_stay == False:
+        if not d_stay:
+            draw_card(d_hand, 'd')
+            if check_hand(d_hand) >= 17:
+                d_stay = True
+    #do last
     if check_hand(d_hand) > check_hand(p_hand):
         lose()
+    if check_hand(d_hand) == check_hand(p_hand):
+        draw() 
     win()
 init_bj()
 blackJack()
+
