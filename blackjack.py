@@ -1,6 +1,13 @@
 import os
 import random
+import random
 import time
+import sys
+
+#global vars
+
+wins = 0
+losses = 0
 
 class bcolors:
     HEADER = '\033[95m'
@@ -33,6 +40,8 @@ for y in range(0, 4):
 
 def check_jqka(x):
     match x:
+        case 1:
+            return "ace"
         case 11:
             return "jack"
         case 12:
@@ -61,20 +70,29 @@ def format_card(x):
     l, r = deck[x]
     return check_jqka(l) + " of " + r
 
+def print_slow(s):
+    for letter in s:
+        sys.stdout.write(letter)
+        sys.stdout.flush()
+        if letter == " ":
+            time.sleep(random.randint(50,60)/1000)
+            continue
+        time.sleep(random.randint(60,74)/1000)  # Adjust sleep duration as needed for desired speed
+    print("")
+
 def draw_card(p, turn):
     global cur_card
     name = "themself"
     if turn == 'p':
         name = "you"
-        print(f"{bcolors.OKGREEN}Dealer gives {name}:      " +
-              format_card(cur_card) + "." + bcolors.ENDC)
+        words = f"{bcolors.OKGREEN}Dealer gives {name}:      " + format_card(cur_card) + "." + bcolors.ENDC
+        print_slow(words)
     else:
-        print(f"{bcolors.OKBLUE}Dealer gives {name}: " + format_card(cur_card)
-              + "." + bcolors.ENDC)
+        words0 = f"{bcolors.OKBLUE}Dealer gives {name}: " + format_card(cur_card) + "." + bcolors.ENDC
+        print_slow(words0)
     p.append(deck[cur_card])
     cur_card += 1
-    time.sleep(0)
-
+    time.sleep(0.1)
 def check_hand(p):
     values = []
     total = 0
@@ -99,6 +117,8 @@ def check_hand(p):
     return total
 
 def win():
+    global wins
+    wins += 1
     print(f"       {bcolors.BOLD}{bcolors.OKCYAN}You win!{bcolors.ENDC}")
     print("Play again (y/n): ", end='')
     yn = input()
@@ -120,6 +140,8 @@ def draw():
 
 
 def lose():
+    global losses
+    losses += 1
     print(f"       {bcolors.WARNING}You lose!{bcolors.ENDC}")
     print("Play again (y/n): ", end='')
     yn = input()
@@ -140,14 +162,14 @@ def ask_hit():
             print("You bust better luck next time.")
             lose()
     else:
-        return 0
+        return 0 
 
 def blackJack():
     d_stay = False
     d_bust = False
     p_stay = False
     os.system("clear")
-    print(f"{bcolors.BOLD}       BlackJack{bcolors.ENDC}")
+    print(f"{bcolors.BOLD}       BlackJack (wins:{wins} losses:{losses}){bcolors.ENDC}")
     draw_card(p_hand, 'p')
     draw_card(d_hand, 'd')
     draw_card(p_hand, 'p')
@@ -173,21 +195,24 @@ def blackJack():
         print("Dealer busts!")
         win()
     if not p_stay:
-        ask_hit()
+        c = ask_hit()
         if check_hand(p_hand) > 21:
             lose()
-        else:
+        if c != 0: # player drew 5 cards auto win
             win()
     while d_stay == False:
         if not d_stay:
             draw_card(d_hand, 'd')
             if check_hand(d_hand) >= 17:
                 d_stay = True
+            if check_hand(d_hand) > 21:
+                print("Dealer busts!")
+                win()
     #do last
     if check_hand(d_hand) > check_hand(p_hand):
         lose()
     if check_hand(d_hand) == check_hand(p_hand):
-        draw() 
+        draw()
     win()
 init_bj()
 blackJack()
